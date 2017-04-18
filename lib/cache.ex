@@ -10,29 +10,34 @@ defmodule Todo.Cache do
   end
 
   def init(_) do
-    {:ok, %{}}
+    {:ok, nil}
   end
 
   @doc """
   Get server process pid by todo_list_name.
   If none is found - start new one
   """
-  def handle_call({:server_process, todo_list_name}, _, servers) do
-    case Map.get(servers, todo_list_name) do
-      nil ->
-        {:ok, new_server} = Todo.Server.start_link(todo_list_name)
-        {
-          :reply,
-          new_server,
-          Map.put(servers, todo_list_name, new_server)
-        }
-
-      value ->
-        {:reply, value, servers}
+  def handle_call({:server_process, todo_list_name}, _, _) do
+    server_pid = case Todo.Server.whereis(todo_list_name) do
+      :undefined ->
+        {:ok, pid} = Todo.ServerSupervisor.start_child(todo_list_name)
+        pid
+      pid -> pid
     end
+    {
+      :reply,
+      server_pid,
+      nil
+    }
   end
 
   def server_process(todo_list_name) do
-    GenServer.call(@cache, {:server_process, todo_list_name})
+    case Todo.Server.whereis(todo_list_name) do
+      :undefined ->
+        # There's no to-do server, so we'll issue request to the cache process.
+        GenServer.call(@cache, {:server_process, todo_list_name})
+
+      pid -> pid
+    end
   end
 end

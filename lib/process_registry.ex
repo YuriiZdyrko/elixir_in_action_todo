@@ -2,11 +2,11 @@ defmodule Todo.ProcessRegistry do
 
   use GenServer
   import Kernel, except: [send: 2]
-  import IEx
 
   @me __MODULE__
 
   def start_link do
+    IO.puts("Starting Todo.ProcessRegistry")
     GenServer.start_link(__MODULE__, nil, [name: @me])
   end
 
@@ -47,12 +47,12 @@ defmodule Todo.ProcessRegistry do
     end
   end
 
-  def handle_cast({:unregister_name, key}, state) do
-    {:noreply, Map.delete(state, key)}
-  end
-
   def handle_call({:whereis_name, key}, _from, state) do
     {:reply, Map.get(state, key, :undefined), state}
+  end
+
+  def handle_cast({:unregister_name, key}, state) do
+    {:noreply, Map.delete(state, key)}
   end
 
   def handle_info({:DOWN, _, :process, pid, _}, process_registry) do

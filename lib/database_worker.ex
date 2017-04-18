@@ -10,7 +10,7 @@ defmodule Todo.DatabaseWorker do
     GenServer.start_link(__MODULE__, nil, name: via_tuple(id_suffix))
   end
 
-  def init() do
+  def init(_) do
     {:ok, nil}
   end
 
