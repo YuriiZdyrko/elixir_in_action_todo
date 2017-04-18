@@ -1,7 +1,6 @@
 defmodule Todo.Database do
 
   use GenServer
-  import Todo.List
   alias Todo.DatabaseWorker
 
   @db_folder "./db"
@@ -14,8 +13,7 @@ defmodule Todo.Database do
   def init(_) do
     IO.puts("Todo.Database init")
     File.mkdir(@db_folder)
-    spawn_workers()
-    {:ok, nil}
+    {:ok, nil, 0}
   end
 
   def handle_cast({:store, key, val}, _) do
@@ -23,13 +21,20 @@ defmodule Todo.Database do
     {:noreply, nil}
   end
 
-  def handle_call({:get, key}, _caller, _) do
+  def handle_call({:get, key}, _c, _) do
     result = DatabaseWorker.get(get_id_suffix(key), key)
     {:reply, result, nil}
   end
 
-  def handle_info(msg, _state) do
+  def handle_info(:timeout, state) do
+    IO.puts("spawning workers")
+    spawn_workers()
+    {:noreply, state}
+  end
+
+  def handle_info(msg, state) do
     IO.puts("TodoDatabase:handle_info #{msg}")
+    {:noreply, state}
   end
 
   def terminate(reason, _status) do

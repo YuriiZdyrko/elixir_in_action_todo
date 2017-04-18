@@ -8,6 +8,8 @@ defmodule Todo.CacheSupervisor do
 
   def init(_) do
     processes = [
+      worker(Todo.ProcessRegistry, []),
+      worker(Todo.Database, []),
       worker(Todo.Cache, [])
     ]
     supervise(processes, strategy: :one_for_one)

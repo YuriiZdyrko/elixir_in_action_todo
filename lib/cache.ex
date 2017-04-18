@@ -2,13 +2,10 @@ defmodule Todo.Cache do
 
   use GenServer
 
-  alias Todo.Database
-
   @cache __MODULE__
 
   def start_link do
     IO.puts("Starting Todo.Cache")
-    Database.start_link()
     GenServer.start_link(__MODULE__, nil, [name: @cache])
   end
 
