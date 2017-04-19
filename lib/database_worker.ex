@@ -15,19 +15,21 @@ defmodule Todo.DatabaseWorker do
     {:ok, nil}
   end
 
-  def handle_cast({:store, key, val}, _) do
+  def handle_call({:store, key, val}, _from, _state) do
     IO.puts(":store on DatabaseWorker #{inspect self()}")
-    file_path = Path.join(@db_folder, key)
+    File.mkdir(Path.join(@db_folder, Atom.to_string(node()))) 
+    file_path = Path.join(@db_folder, Atom.to_string(node())) |> Path.join(key)
     if !File.exists?(file_path) do
       :ok = File.touch(file_path)
     end
     File.write(file_path, :erlang.term_to_binary(val))
-    {:noreply, nil}
+    {:reply, :ok, nil}
   end
 
   def handle_call({:get, key}, caller, _) do
+    file_path = Path.join(@db_folder, Atom.to_string(node())) |> Path.join(key)
     spawn(fn ->
-      data = case File.read(Path.join(@db_folder, key)) do
+      data = case File.read(file_path) do
         {:ok, binary} ->
           :erlang.binary_to_term(binary)
         {:error, _} ->
@@ -49,7 +51,7 @@ defmodule Todo.DatabaseWorker do
 
   def store(worker_id, key, data) do
     pid = Registry.whereis_name({:database_worker, worker_id})
-    GenServer.cast(pid, {:store, key, data})
+    GenServer.call(pid, {:store, key, data})
 
     # v1 GenServer.cast(via_tuple(worker_id), {:store, key, data})
   end

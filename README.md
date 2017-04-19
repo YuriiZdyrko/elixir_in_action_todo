@@ -13,8 +13,11 @@ def deps do
 end
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/todo](https://hexdocs.pm/todo).
+## Run
 
+iex --sname node1@localhost -S mix
+iex --erl "-todo port 5555" --sname node2@localhost -S mix
+
+http://localhost:5454/add_entry?list=girls_list&date=20131219&title=Weirdo2
 http://localhost:5454/entries?list=girls_list&date=20131219
+http://localhost:5555/entries?list=girls_list&date=20131219

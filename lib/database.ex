@@ -18,6 +18,17 @@ defmodule Todo.Database do
   end
 
   def store(key, val) do
+    {results, bad_nodes} =
+      :rpc.multicall(
+        __MODULE__, :store_local, [key, val],
+        :timer.seconds(5)
+      )
+    IO.puts("Results of rpc:store #{inspect results}")
+    Enum.each(bad_nodes, &IO.puts("Store failed on node #{inspect &1}"))
+    :ok
+  end
+
+  def store_local(key, val) do
     DatabaseWorker.store(get_id_suffix(key), key, val)
   end
 

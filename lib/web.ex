@@ -5,7 +5,8 @@ defmodule Todo.Web do
   plug :dispatch
 
   def start_server do
-    Plug.Adapters.Cowboy.http(__MODULE__, nil, port: 5454)
+    port = Application.get_env(:todo, :port)
+    Plug.Adapters.Cowboy.http(__MODULE__, nil, port: port)
   end
 
   # curl 'http://localhost:5454/entries?list=bob&date=20131219'
@@ -41,7 +42,7 @@ defmodule Todo.Web do
 
 
   # curl -d '' 'http://localhost:5454/add_entry?list=bob&date=20131219&title=Dentist'
-  post "/add_entry" do
+  get "/add_entry" do
     conn
     |> Plug.Conn.fetch_query_params
     |> add_entry
