@@ -32,7 +32,10 @@ defmodule Todo.Mixfile do
   defp deps do
     [
       {:remix, "~> 0.0.2"},
-      {:meck, "0.8.2", only: :test}
+      {:cowboy, "~> 1.1"},
+      {:plug, "~> 1.3"},
+      {:meck, "0.8.2", only: :test},
+      {:httpoison, "~> 0.11.1"}
     ]
   end
 end
