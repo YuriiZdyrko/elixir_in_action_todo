@@ -34,7 +34,6 @@ defmodule Runner do
   end
 
   def run do
-    Todo.CacheSupervisor.start_link
     run1()
     run2()
     run3()

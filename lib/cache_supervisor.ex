@@ -8,7 +8,9 @@ defmodule Todo.CacheSupervisor do
 
   def init(_) do
     processes = [
-      worker(Todo.ProcessRegistry, []),
+      # v1 worker(Todo.ProcessRegistry, []),
+      supervisor(Registry, [:unique, :todo_server], [id: :server_registry]),
+      supervisor(Registry, [:unique, :database_worker], [id: :worker_registry]),
       supervisor(Todo.SystemSupervisor, [])
     ]
     supervise(processes, strategy: :rest_for_one)

@@ -15,9 +15,11 @@ defmodule Todo.Mixfile do
   # Type "mix help compile.app" for more information
   def application do
     # Specify extra applications you'll use from Erlang/Elixir
-    [extra_applications: [:logger]]
+    [
+      mod: {Todo, []},
+      extra_applications: [:logger]
+    ]
   end
-
   # Dependencies can be Hex packages:
   #
   #   {:my_dep, "~> 0.3.0"}
@@ -28,6 +30,9 @@ defmodule Todo.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
-    [{:remix, "~> 0.0.2"}]
+    [
+      {:remix, "~> 0.0.2"},
+      {:meck, "0.8.2", only: :test}
+    ]
   end
 end

@@ -15,7 +15,9 @@ defmodule Todo.Server do
   end
 
   def whereis(name) do
-    Todo.ProcessRegistry.whereis_name({:todo_server, name})
+    Registry.whereis_name({:database_worker, name})
+
+    # v1 Todo.ProcessRegistry.whereis_name({:todo_server, name})
   end
 
 
@@ -42,6 +44,8 @@ defmodule Todo.Server do
   end
 
   defp via_tuple(name) do
-    {:via, Todo.ProcessRegistry, {:todo_server, name}}
+    {:via, Registry, {:todo_server, name}}
+
+    # v1 {:via, Todo.ProcessRegistry, {:todo_server, name}}
   end
 end

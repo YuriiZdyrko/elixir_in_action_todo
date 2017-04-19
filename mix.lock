@@ -1,1 +1,2 @@
-%{"remix": {:hex, :remix, "0.0.2", "f06115659d8ede8d725fae1708920ef73353a1b39efe6a232d2a38b1f2902109", [:mix], []}}
+%{"meck": {:hex, :meck, "0.8.2", "f15f7d513e14ec8c8dee9a95d4ae585b3e5a88bf0fa6a7573240d6ddb58a7236", [:make, :rebar], []},
+  "remix": {:hex, :remix, "0.0.2", "f06115659d8ede8d725fae1708920ef73353a1b39efe6a232d2a38b1f2902109", [:mix], []}}

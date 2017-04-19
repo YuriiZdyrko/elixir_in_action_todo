@@ -1,5 +1,6 @@
 defmodule Todo.DatabaseWorker do
   use GenServer
+  import IEx
 
   @db_folder "./db"
 
@@ -47,17 +48,26 @@ defmodule Todo.DatabaseWorker do
   end
 
   def store(worker_id, key, data) do
-    GenServer.cast(via_tuple(worker_id), {:store, key, data})
+    pid = Registry.whereis_name({:database_worker, worker_id})
+    GenServer.cast(pid, {:store, key, data})
+
+    # v1 GenServer.cast(via_tuple(worker_id), {:store, key, data})
   end
 
   def get(worker_id, key) do
-    GenServer.call(via_tuple(worker_id), {:get, key})
+    pid = Registry.whereis_name({:database_worker, worker_id})
+    GenServer.call(pid, {:get, key})
+
+    # v1 GenServer.call(via_tuple(worker_id), {:get, key})
   end
 
 
   defp via_tuple(worker_id) do
     # And the tuple always follow the same format:
     # {:via, module_name, term}
-    {:via, Todo.ProcessRegistry, {:database_worker, worker_id}}
+
+    {:via, Registry, {:database_worker, worker_id}}
+
+    # v1 {:via, Todo.ProcessRegistry, {:database_worker, worker_id}}
   end
 end
